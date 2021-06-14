@@ -1,0 +1,11 @@
+{
+  "name": "ReadingListCLI",
+  "version": "1.0.0",
+  "dependencies": {
+    "axios": "^0.21.1"
+  },
+  "description": "Use Gogole API to add/retrieve/check books and book lists",
+  "main": "index.js",
+  "repository": "git@github.com:daniel-thao/ReadingListCLI.git",
+  "license": "MIT"
+}
