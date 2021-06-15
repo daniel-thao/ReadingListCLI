@@ -45,7 +45,7 @@ message.showRecents = (data) => {
 message.addBookError = (situation) => {
     switch (situation) {
         case "missingBookID":
-            return console.log("\n--------------------\n" + "\nPlease indicate one book you want to add to your reading list\n" + "\n--------------------\n");
+            return console.log("\n--------------------\n" + "\nPlease indicate one book you want to add to your reading list with the numbers ranging from 0 - 4\n" + "\n--------------------\n");
         case "noRecentSearches":
             return console.log("\n--------------------\n" + "\nYou currently don't have any recent searches to add a book from\n" + "\n--------------------\n");
         default:

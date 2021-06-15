@@ -43,7 +43,7 @@ command.add = async (CLIArray) => {
     // increment count for keeping track of books in reading list
     let increment = 0;
 
-    if (!CLIArray[0] || CLIArray[1]) {
+    if (!CLIArray[0] || CLIArray[1] || CLIArray[0] > 4) {
         message.addBookError("missingBookID");
     } else {
         // first read check to see if there is a recentSearches db and if not, give user suggestions to do other commands
