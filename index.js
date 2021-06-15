@@ -1,5 +1,6 @@
 // node index.js / yarn start to initialize the application
 const axios = require("axios");
+const fs = require("fs");
 
 async function initApp() {
     if (!process.argv[2]) {
@@ -22,29 +23,72 @@ async function initApp() {
         for (let i = 0; i < 3; i++) {
             process.argv.shift()
         }
-        const searchTerms = process.argv
-
+        const userInput = process.argv
         const bookObj = { 0: "" }
 
         switch (choice) {
             case "search":
-                const queryURL = `https://www.googleapis.com/books/v1/volumes?q=${searchTerms}&maxResults=5`;
-
+                const searchTerm = userInput.join("+")
+                const queryURL = `https://www.googleapis.com/books/v1/volumes?q=${searchTerm}&maxResults=5`;
 
                 // Fetch call
                 await axios.get(queryURL).then(async (res) => {
                     let count = 0
                     // Show current page's titles and authors and add a last option to click the next page
-                    const resTitleAndAuthors = res.data.items.map(index => {
+                    res.data.items.map(index => {
                         bookObj[count] = { title: index.volumeInfo.title, authors: index.volumeInfo.authors, publisher: index.volumeInfo.publisher }
                         count++;
                     })
                 })
 
-                console.log()
-                return console.log("they wanted to Search");
+                // Then store it temporarily in a .json file
+                return fs.writeFile("recentSearches.json", JSON.stringify(bookObj, null, 4), (err) => {
+                    if (err) { throw err } else {
+                        return console.log('\nYour searches have been added your recents temporary storage!\n');
+                    }
+                })
             case "view":
-                return console.log("they wanted to check their list");
+                return fs.readFile("./readingList.json", "UTF8", (err, data) => {
+                    console.log(JSON.parse(data));
+                })
+            case "recent":
+                return fs.readFile("./recentSearches.json", "UTF8", (err, data) => {
+                    if (err) return ("You currently don't have any recent searches");
+                    console.log(JSON.parse(data));
+                });
+            case "add":
+                let increment = 0;
+                if (!process.argv[0] || process.argv[1]) {
+                    console.log("\nPlease indicate one book you want to add to your reading list\n");
+                } else {
+                    fs.readFile("./recentSearches.json", "UTF8", (err, data) => {
+                        if (err) return ("You currently don't have any recent searches to add a book from");
+
+                        const bookChoices = JSON.parse(data);
+                        // console.log(bookChoices);
+                        let readingList = {};
+
+                        fs.readFile("./readingList.json", "UTF8", (err, data) => {
+                            readingList = JSON.parse(data);
+                            for (key in readingList) {
+                                increment++
+                            }
+                            console.log(increment);
+                            console.log(readingList);
+
+                            readingList[increment] = bookChoices[process.argv[0]];
+
+
+
+                            fs.writeFile("readingList.json", JSON.stringify(readingList, null, 4), (err) => {
+                                if (err) throw err;
+                                console.log("\nYou've added a book!");
+                            })
+                        });
+
+                    });
+                }
+                break;
             default: break;
         }
     }

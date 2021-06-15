@@ -1,0 +1,37 @@
+{
+    "0": {
+        "title": "The Fellowship of the Ring",
+        "authors": [
+            "John Ronald Reuel Tolkien"
+        ],
+        "publisher": "HarperCollins Publishers"
+    },
+    "1": {
+        "title": "The Fellowship of the Ring",
+        "authors": [
+            "J.R.R. Tolkien"
+        ],
+        "publisher": "Houghton Mifflin Harcourt"
+    },
+    "2": {
+        "title": "The Lord of the Rings",
+        "authors": [
+            "J.R.R. Tolkien"
+        ],
+        "publisher": "Houghton Mifflin Harcourt"
+    },
+    "3": {
+        "title": "Guide to Middle Earth",
+        "authors": [
+            "Colin Duriez"
+        ],
+        "publisher": "The History Press"
+    },
+    "4": {
+        "title": "The Fellowship of the Ring",
+        "authors": [
+            "J. R. R. Tolkien"
+        ],
+        "publisher": "HarperCollins"
+    }
+}
