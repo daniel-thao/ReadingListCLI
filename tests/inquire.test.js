@@ -39,7 +39,6 @@ test("to see if my inquirer module works like the original Inquirer package", as
   const NPM = await iMockFn(inquireData, "User's Input");
   // Then be able to exact the data from how Inquirer changes the name key in the original Obj to it's value
   const mockInquirerResult = NPM[inquireData.name];
-  console.log(NPM);
 
   /* 
   NOW for the results of the module I made
