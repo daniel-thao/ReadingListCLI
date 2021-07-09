@@ -6,10 +6,6 @@ const commands = new Command();
 const mockCommand = require("../__mocks__/commands");
 const mockCommands = new mockCommand();
 
-// Testing the inquire mock function
-const iMockfn = require("../__mocks__/inquirer");
-const appQuestions = require("../../questions/questions");
-
 jest.mock("axios");
 
 /*
