@@ -7,9 +7,26 @@ function Command() {
   */
   this.bookSearchInputCheck = async (userInput) => {
     let isValid = false;
-    let specialCharArr = ["*", "^", "&", "+", "-", "$", "(", ")", "#", "%", "="];
+    let specialCharArr = [
+      "*",
+      "^",
+      "&",
+      "+",
+      "-",
+      "$",
+      "(",
+      ")",
+      "#",
+      "%",
+      "=",
+    ];
 
-    if (typeof userInput !== "string" || userInput.trim() === "" || userInput === null || userInput === undefined) {
+    if (
+      typeof userInput !== "string" ||
+      userInput.trim() === "" ||
+      userInput === null ||
+      userInput === undefined
+    ) {
       return (isValid = false);
     } else isValid = true;
 
@@ -26,9 +43,15 @@ function Command() {
   /*
   recursive function to house the fetch call and other things
   */
-  this.requestAndSelect = async (userInputResults, amountOfBooksLookedThrough) => {
+  this.requestAndSelect = async (
+    userInputResults,
+    amountOfBooksLookedThrough
+  ) => {
     // Actual fetch call
-    bookFound = await this.bookSearchFetch(userInputResults.split(" "), amountOfBooksLookedThrough);
+    bookFound = await this.bookSearchFetch(
+      userInputResults.split(" "),
+      amountOfBooksLookedThrough
+    );
 
     // Follow up question to select one book from fetch results, or keep looking
     await inquirer(appAsks("selectBook", bookFound)).then(async (bookList) => {
@@ -59,11 +82,21 @@ function Command() {
 
     // Fetch call with query above and returns with this
     return [
-      { volumeInfo: { title: userInput.join(" ") + " " + startingIndex, authors: "fake", publisher: "null" } },
-      { volumeInfo: { title: userInput.join(" ") + " " + (startingIndex + 1), authors: "fake", publisher: "null" } },
-      { volumeInfo: { title: userInput.join(" ") + " " + (startingIndex + 2), authors: "fake", publisher: "null" } },
-      { volumeInfo: { title: userInput.join(" ") + " " + (startingIndex + 3), authors: "fake", publisher: "null" } },
-      { volumeInfo: { title: userInput.join(" ") + " " + (startingIndex + 4), authors: "fake", publisher: "null" } },
+      `Title: ${
+        userInput.join(" ") + " " + startingIndex
+      }\nAuthor: "fake"\nPublisher: "null"\n`,
+      `Title: ${
+        userInput.join(" ") + " " + (startingIndex + 1)
+      }\nAuthor: "fake"\nPublisher: "null"\n`,
+      `Title: ${
+        userInput.join(" ") + " " + (startingIndex + 2)
+      }\nAuthor: "fake"\nPublisher: "null"\n`,
+      `Title: ${
+        userInput.join(" ") + " " + (startingIndex + 3)
+      }\nAuthor: "fake"\nPublisher: "null"\n`,
+      `Title: ${
+        userInput.join(" ") + " " + (startingIndex + 4)
+      }\nAuthor: "fake"\nPublisher: "null"\n`,
       ".....Next Page Results\n",
     ];
   };

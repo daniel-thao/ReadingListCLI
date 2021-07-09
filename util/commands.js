@@ -60,7 +60,7 @@ function Command() {
         await this.fetchAndSelect(userInput, startIndex, bookSelectionArr);
       } else {
         // everything from .split() is for formatting purposes
-        bookSelectionArr.push(
+        return bookSelectionArr.push(
           bookList.bookChosen
             .split("\n")
             .join("///")

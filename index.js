@@ -6,12 +6,12 @@ const CommandCenter = require("./util/commandCenter");
 const commandCenter = new CommandCenter();
 
 // my exporting of inquirer
-const inquirer = require("./util/inquirer");
+const inquire = require("./util/inquirer");
 
 // function for recursion
 function initQuestion() {
   console.clear()
-  inquirer(appAsks("starterQuestion")).then(async (choiceArr) => {
+  inquire(appAsks("starterQuestion")).then(async (choiceArr) => {
     switch (choiceArr.choice) {
       case "Search For a Book":
         // Send them to the next question
