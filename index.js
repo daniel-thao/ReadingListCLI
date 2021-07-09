@@ -1,38 +1,45 @@
-// node index.js / yarn start to initialize the application
-const message = require("./assets/UIMessages/messages");
-const command = require("./assets/Util/Commands/actions");
+// These are the other questions and functions
+const appAsks = require("./questions/questions");
 
-async function initApp() {
-    // If there is no applcation command, show opening message
-    if (!process.argv[2]) {
-        message.entrance();
-    } else {
-        // turns all letters to lowercase for consistency
-        const choice = process.argv[2].toLowerCase();
+// functions that mirror the inquirer questions
+const CommandCenter = require("./util/commandCenter");
+const commandCenter = new CommandCenter();
 
-        // takes out all the init and application commands
-        for (let i = 0; i < 3; i++) {
-            process.argv.shift()
-        }
+// my exporting of inquirer
+const inquirer = require("./util/inquirer");
 
-        // new variables to create search terms and list books in
-        const userInput = process.argv
-        const bookObj = { 0: "" }
-
-        // based on application commands, do these actions
-        switch (choice) {
-            case "search":
-                return command.search(userInput, bookObj);
-            case "view":
-                return command.view();
-            case "recent":
-                return command.recent();
-            case "add":
-                return command.add(process.argv);
-            default: return message.incompleteCommand();
-        }
+// function for recursion
+function initQuestion() {
+  console.clear()
+  inquirer(appAsks("starterQuestion")).then(async (choiceArr) => {
+    switch (choiceArr.choice) {
+      case "Search For a Book":
+        // Send them to the next question
+        await commandCenter.bookTitleSearch();
+        // return restart();
+        break;
+      case "Check Your Books":
+        // reads the db
+        await commandCenter.lookAtReadingList();
+        // return restart();
+        break;
+      case "Exit":
+        return console.log("\nPleasure to be of Service!");
+      default:
+        return;
     }
-
+  });
 }
 
-initApp();
+// // Restarts or exits the app
+// const restart = async () => {
+//   // timed question in order to avoid some bugs with inquirer
+//   setTimeout(async () => {
+//     const shouldStop = await commandCenter.isUserFinished();
+//     if (shouldStop) {
+//       return console.log("\nPleasure to be of Service!");
+//     } else initQuestion();
+//   }, 300);
+// };
+
+initQuestion();

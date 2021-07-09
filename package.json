@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "dependencies": {
     "axios": "^0.21.1",
+    "inquirer": "^8.1.1",
     "jest": "^27.0.6"
   },
   "description": "Use Gogole API to add/retrieve/check books and book lists",
