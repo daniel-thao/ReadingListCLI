@@ -142,7 +142,7 @@ function Command() {
   Starts the saving the Book to the readingList process
   */
   this.bookSave = async (bookToSave) => {
-    this.isDBEmpty(bookToSave);
+    return this.isDBEmpty(bookToSave);
   };
 
   /*
@@ -172,7 +172,7 @@ function Command() {
           }
         );
       } else {
-        this.addBookToDB(data, bookToSave);
+        return this.addBookToDB(data, bookToSave);
       }
     });
   };
@@ -230,7 +230,7 @@ function Command() {
           "\nWe will attempt to restore the file to it's original state" +
           "\n\n--------------\n\n\n"
       );
-      this.parseDB(data);
+      return this.parseDB(data);
     }
   };
 
@@ -374,7 +374,7 @@ function Command() {
 
 
 
-  
+
   Rewrite the readingList JSON file with the reconstructed data
   */
   this.restoreDB = async (restorableData) => {

@@ -18,5 +18,15 @@
         "Title": "The Lord of the Rings",
         "Author": "J.R.R. Tolkien",
         "Publisher": "Houghton Mifflin Harcourt"
+    },
+    "4": {
+        "Title": "The Lord of the Rings",
+        "Author": "Wayne G. Hammond,Christina Scull",
+        "Publisher": "Houghton Mifflin Harcourt"
+    },
+    "5": {
+        "Title": "The Star Wars Book",
+        "Author": "Cole Horton,Pablo Hidalgo,Dan Zehr",
+        "Publisher": "undefined"
     }
 }
