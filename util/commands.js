@@ -9,9 +9,26 @@ function Command() {
   */
   this.bookSearchInputCheck = async (userInput) => {
     let isValid = false;
-    let specialCharArr = ["*", "^", "&", "+", "-", "$", "(", ")", "#", "%", "="];
+    let specialCharArr = [
+      "*",
+      "^",
+      "&",
+      "+",
+      "-",
+      "$",
+      "(",
+      ")",
+      "#",
+      "%",
+      "=",
+    ];
 
-    if (typeof userInput !== "string" || userInput.trim() === "" || userInput === null || userInput === undefined) {
+    if (
+      typeof userInput !== "string" ||
+      userInput.trim() === "" ||
+      userInput === null ||
+      userInput === undefined
+    ) {
       return (isValid = false);
     } else isValid = true;
 
@@ -50,24 +67,29 @@ function Command() {
   recursive function to house the fetch call and other things
   */
   this.fetchAndSelect = async (userInput, startIndex, bookSelectionArr) => {
-    searchResults = await this.bookSearchFetch(userInput.split(" "), startIndex);
+    searchResults = await this.bookSearchFetch(
+      userInput.split(" "),
+      startIndex
+    );
 
     // Follow up question to select one book from fetch results, or keep looking
-    await inquire(appAsks("selectBook", searchResults)).then(async (bookList) => {
-      if (bookList.bookChosen === ".....Next Page Results\n") {
-        bookSelectionArr.push("Next Page");
-        startIndex += 5;
-        await this.fetchAndSelect(userInput, startIndex, bookSelectionArr);
-      } else {
-        // everything from .split() is for formatting purposes
-        return bookSelectionArr.push(
-          bookList.bookChosen
-            .split("\n")
-            .join("///")
-            .substring(0, bookList.bookChosen.length + 3)
-        );
+    await inquire(appAsks("selectBook", searchResults)).then(
+      async (bookList) => {
+        if (bookList.bookChosen === ".....Next Page Results\n") {
+          bookSelectionArr.push("Next Page");
+          startIndex += 5;
+          await this.fetchAndSelect(userInput, startIndex, bookSelectionArr);
+        } else {
+          // everything from .split() is for formatting purposes
+          return bookSelectionArr.push(
+            bookList.bookChosen
+              .split("\n")
+              .join("///")
+              .substring(0, bookList.bookChosen.length + 3)
+          );
+        }
       }
-    });
+    );
   };
 
   /*
@@ -75,7 +97,9 @@ function Command() {
   */
   this.selectionFilterAndFormat = async (bookSelectionArr) => {
     // Filter out weird atrifacts from recursion of inqurier prompt after user has chosen their book
-    const actualBook = bookSelectionArr.filter((element) => element !== "Next Page");
+    const actualBook = bookSelectionArr.filter(
+      (element) => element !== "Next Page"
+    );
 
     // format the data from elements in an array into key pair values in an object
     const bookObj = {};
@@ -92,64 +116,78 @@ function Command() {
   Saves the Book to the readingList
   */
   this.bookSave = async (bookToSave) => {
-    let amountOfBooks = 0;
+    this.isDBEmpty(bookToSave);
+  };
 
+  this.isDBEmpty = async (bookToSave) => {
     fs.readFile("./readingList.json", "UTF8", (err, data) => {
       if (err) {
         // If empty, write the file with the new data
         const firstBook = { 0: bookToSave };
 
-        fs.writeFile("readingList.json", JSON.stringify(firstBook, null, 4), (err) => {
-          if (err) {
-            console.log("error here");
-            throw err;
-          }
-          console.log("\nYou've added your first book!");
-        });
-      } else {
-        // otherwise if it not empty
-        try {
-          JSON.parse(data);
-
-          // otherwise grab the data and parse it
-          const readingList = JSON.parse(data);
-
-          // Check to see if the current book is already saved in your DB. If not there, increment num variable to be a number higher than all the keys in DB
-          for (key in readingList) {
-            if (
-              readingList[key].Title === bookToSave.Title &&
-              readingList[key].Author === bookToSave.Author &&
-              readingList[key].Publisher === bookToSave.Publisher
-            ) {
-              return console.log("You already have this saved in your list.\n");
-            } else {
-              amountOfBooks++;
-            }
-          }
-
-          // Then add it
-          readingList[JSON.stringify(amountOfBooks)] = bookToSave;
-
-          // Then rewrite the file with new data
-          fs.writeFile("readingList.json", JSON.stringify(readingList, null, 4), (err) => {
+        fs.writeFile(
+          "readingList.json",
+          JSON.stringify(firstBook, null, 4),
+          (err) => {
             if (err) {
+              console.log("error here");
               throw err;
-            } else {
-              return console.log("Your new book has been added!\n");
             }
-          });
-        } catch {
-          // If code above causes an error, go to the restoration process
-          console.log(
-            "\n\n--------------" +
-              "\n\nThe current readinglist seems to corrupted." +
-              "\nWe will attempt to restore the file to it's original state" +
-              "\n\n--------------\n\n\n"
-          );
-          this.parseDB(data);
-        }
+            console.log("\nYou've added your first book!");
+          }
+        );
+      } else {
+        this.addBookToDB(data, bookToSave)
       }
     });
+  };
+
+  this.addBookToDB = async (data, bookToSave) => {
+    let amountOfBooks = 0;
+    try {
+      JSON.parse(data);
+
+      // otherwise grab the data and parse it
+      const readingList = JSON.parse(data);
+
+      // Check to see if the current book is already saved in your DB. If not there, increment num variable to be a number higher than all the keys in DB
+      for (key in readingList) {
+        if (
+          readingList[key].Title === bookToSave.Title &&
+          readingList[key].Author === bookToSave.Author &&
+          readingList[key].Publisher === bookToSave.Publisher
+        ) {
+          return console.log("You already have this saved in your list.\n");
+        } else {
+          amountOfBooks++;
+        }
+      }
+
+      // Then add it
+      readingList[JSON.stringify(amountOfBooks)] = bookToSave;
+
+      // Then rewrite the file with new data
+      fs.writeFile(
+        "readingList.json",
+        JSON.stringify(readingList, null, 4),
+        (err) => {
+          if (err) {
+            throw err;
+          } else {
+            return console.log("Your new book has been added!\n");
+          }
+        }
+      );
+    } catch {
+      // If code above causes an error, go to the restoration process
+      console.log(
+        "\n\n--------------" +
+          "\n\nThe current readinglist seems to corrupted." +
+          "\nWe will attempt to restore the file to it's original state" +
+          "\n\n--------------\n\n\n"
+      );
+      this.parseDB(data);
+    }
   };
 
   /*
@@ -214,9 +252,12 @@ function Command() {
         for (let j = cCArrStart; j < cCArrStart + 3; j++) {
           // check if all the formatting is correct for the Title/Author/Pub KVP
           if (
-            (reviewTitle.match(regexExp.cKVPCommaRegex) === null && j === cCArrStart) ||
-            (reviewAuthor.match(regexExp.cKVPCommaRegex) === null && j === cCArrStart + 1) ||
-            (reviewPub.match(regexExp.childrenKVPRegex) === null && j === cCArrStart + 2)
+            (reviewTitle.match(regexExp.cKVPCommaRegex) === null &&
+              j === cCArrStart) ||
+            (reviewAuthor.match(regexExp.cKVPCommaRegex) === null &&
+              j === cCArrStart + 1) ||
+            (reviewPub.match(regexExp.childrenKVPRegex) === null &&
+              j === cCArrStart + 2)
           ) {
             doesDestroy = true;
             break;
@@ -278,18 +319,22 @@ function Command() {
   Rewrite the readingList JSON file with the reconstructed data
   */
   this.restoreDB = async (restorableData) => {
-    fs.writeFile("readingList.json", JSON.stringify(restorableData, null, 4), (err) => {
-      if (err) {
-        console.log("error here");
-        throw err;
+    fs.writeFile(
+      "readingList.json",
+      JSON.stringify(restorableData, null, 4),
+      (err) => {
+        if (err) {
+          console.log("error here");
+          throw err;
+        }
+        console.log(
+          "\n\n--------------" +
+            "\n\nWe've restored the DB completely!" +
+            "\n\nPlease reselect recontinue the option chosen earlier again" +
+            "\n\n--------------\n\n\n"
+        );
       }
-      console.log(
-        "\n\n--------------" +
-          "\n\nWe've restored the DB completely!" +
-          "\n\nPlease reselect recontinue the option chosen earlier again" +
-          "\n\n--------------\n\n\n"
-      );
-    });
+    );
   };
 }
 

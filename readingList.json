@@ -13,5 +13,10 @@
         "Title": "The Lord of the Rings",
         "Author": "J. R. R. Tolkien",
         "Publisher": "Mariner Books"
+    },
+    "3": {
+        "Title": "The Lord of the Rings",
+        "Author": "J.R.R. Tolkien",
+        "Publisher": "Houghton Mifflin Harcourt"
     }
 }

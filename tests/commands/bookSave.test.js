@@ -1,83 +1,31 @@
-"use strict";
+jest.mock("fs");
+const mockCommand = require("../__mocks__/commands");
+const mockCommands = new mockCommand();
 
-const path = require("path");
+/*
+============================================================
+Integration tests
+============================================================
+*/
 
-const fs = jest.createMockFromModule("fs");
+describe("Search for Book process, saveBook to local empty DB, mock", () => {
+  const bookToSave = { Title: "book1", Author: "fake", Publisher: "null" };
+  const mockDirPath = "/path/to/mockreadinglist.json";
+  let mockReadinglistDB;
+  const result = { 0: bookToSave };
 
-// This is a custom function that our tests can use during setup to specify
-// what the files on the "mock" filesystem should look like when any of the
-// `fs` APIs are used.
-let mockFiles = Object.create(null);
+  beforeEach(() => {
+    // Set up some mocked out file info before each test
+    mockReadinglistDB = require("fs").mockReadFile(mockDirPath, "emptyData");
+  });
 
-function __setMockFiles(newMockFiles) {
-  mockFiles = Object.create(null);
-  console.log(newMockFiles);
-  for (const file in newMockFiles) {
-    const dir = path.dirname(file);
+  test("includes all files in the directory in the summary", async () => {
+    const newMockRLDB = await require("fs").mockWriteFile(
+      mockDirPath,
+      mockReadinglistDB,
+      bookToSave
+    );
+    expect(result).toEqual(newMockRLDB);
+  });
+});
 
-    if (!mockFiles[dir]) {
-      mockFiles[dir] = [];
-    }
-    mockFiles[dir].push(path.basename(file));
-    console.log(mockFiles);
-  }
-}
-
-function mockReadFile(mockReadingList, readingListData, howManyBooks) {
-  if (mockReadingList !== "/path/to/mockreadinglist.json") {
-    return null;
-  } else {
-    switch (readingListData) {
-      case "emptyData":
-        readingListData = {};
-        break;
-      case "notEmpty":
-        readingListData = {};
-        for (let i = 0; i < howManyBooks; i++) {
-          readingListData[i] = { Title:`book ${i}`, Author: "fake", Publisher: "null" };
-        }
-        break;
-      default:
-        console.log("Shouldn't get here");
-        break;
-    }
-  }
-  return readingListData;
-}
-
-function mockWriteFile(mockReadingList, oldData, newData) {
-  let count = 0;
-
-  if (
-    mockReadingList !== "/path/to/mockreadinglist.json" ||
-    oldData === undefined ||
-    oldData === null ||
-    newData === undefined ||
-    newData === null
-  ) {
-    return null;
-  } else if (oldData[0] === undefined || oldData[0] === null) {
-    oldData[0] = newData;
-  } else {
-    for (const keys in oldData) {
-      count++;
-    }
-    oldData[count] = newData;
-    // console.log(oldData);
-    // console.log(newData);
-  }
-  return oldData;
-}
-
-// A custom version of `readdirSync` that reads from the special mocked out
-// file list set via __setMockFiles
-function readdirSync(file) {
-  return mockFiles[directoryPath] || [];
-}
-
-fs.__setMockFiles = __setMockFiles;
-fs.readdirSync = readdirSync;
-fs.mockReadFile = mockReadFile;
-fs.mockWriteFile = mockWriteFile;
-
-module.exports = fs;

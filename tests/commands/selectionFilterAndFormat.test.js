@@ -1,17 +1,3 @@
-// selectionFilterAndFormat = async (bookSelectionArr) => {
-//     // Filter out weird atrifacts from recursion of inqurier prompt after user has chosen their book
-//     const actualBook = bookSelectionArr.filter((element) => element !== "Next Page");
-
-//     // format the data from elements in an array into key pair values in an object
-//     const bookObj = {};
-
-//     actualBook[0].split("///").forEach((element) => {
-//       const splitArrElements = element.split(": ");
-//       bookObj[splitArrElements[0]] = splitArrElements[1];
-//     });
-
-//     return bookObj;
-
 // This is the actual file
 const Command = require("../../util/commands");
 const commands = new Command();

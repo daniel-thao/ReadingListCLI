@@ -3,9 +3,16 @@
 
 const iMockFn = require("../__mocks__/inquirer");
 const appQuestions = require("../../questions/questions");
+const mockFS = require("../__mocks__/fs");
 
 function Command() {
   /*
+
+
+
+
+
+
   recursive function to house the fetch call and other things
   */
   this.fetchAndSelect = async (
@@ -56,6 +63,12 @@ function Command() {
   };
 
   /*
+
+
+
+
+
+
   Calls the google API
   */
   this.bookSearchFetch = async (userInput, startingIndex) => {
@@ -84,10 +97,89 @@ function Command() {
       ".....Next Page Results\n",
     ];
   };
+
+  /*
+
+
+
+
+
+
+  Starts the Mock Book Save
+  */
+  this.bookSave = async (bookToSave, readinglistData, howManybooksInDb) => {
+    const pathToFile = "/path/to/mockreadinglist.json";
+    this.isDBEmpty(bookToSave, readinglistData, howManybooksInDb, pathToFile);
+  };
+
+  /*
+
+
+
+
+
+
+  Checks to see if mock Db is Empty
+  */
+  this.isDBEmpty = async (
+    bookToSave,
+    readinglistData,
+    howManybooksInDb,
+    pathToFile
+  ) => {
+    const DB = await mockFS.mockReadFile(
+      pathToFile,
+      readinglistData,
+      howManybooksInDb
+    );
+
+    if (DB[0] === null || DB[0] === undefined) {
+      const newDB = await mockFS.mockWriteFile(pathToFile, DB, bookToSave);
+      return newDB;
+    } else {
+      return this.addBookToDB(bookToSave, JSON.stringify(DB), pathToFile);
+    }
+  };
+
+  /*
+
+
+
+
+
+
+  Inserts into the DB
+  */
+  this.addBookToDB = async (bookToSave, DB, pathToFile) => {
+    let amountOfBooks = 0;
+    try {
+      const currentDB = JSON.parse(DB);
+      // console.log(currentDB);
+
+      for (key in currentDB) {
+        if (
+          currentDB[key].Title === bookToSave.Title &&
+          currentDB[key].Author === bookToSave.Author &&
+          currentDB[key].Publisher === bookToSave.Publisher
+        ) {
+          return console.log("You already have this saved in your list.\n");
+        } else {
+          amountOfBooks++;
+        }
+      }
+
+      const newDB = await mockFS.mockWriteFile(
+        pathToFile,
+        currentDB,
+        bookToSave
+      );
+      return newDB;
+    } catch {
+      // technically we are supposed to go to the DB corruption check here.
+      // this.parseDB
+      return null;
+    }
+  };
 }
 
-
 module.exports = Command;
-
-const Commands = require('./commands');
-const mockCommands = new Commands();
