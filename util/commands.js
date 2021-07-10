@@ -5,6 +5,11 @@ const appAsks = require("../questions/questions");
 
 function Command() {
   /*
+
+
+
+
+
   Checks the user's Input to see if it's a valid search topic
   */
   this.bookSearchInputCheck = async (userInput) => {
@@ -43,6 +48,11 @@ function Command() {
   };
 
   /*
+
+
+
+
+
   Calls the google API
   */
   this.bookSearchFetch = async (userInput, startingIndex) => {
@@ -64,6 +74,11 @@ function Command() {
   };
 
   /*
+
+
+
+
+
   recursive function to house the fetch call and other things
   */
   this.fetchAndSelect = async (userInput, startIndex, bookSelectionArr) => {
@@ -93,6 +108,11 @@ function Command() {
   };
 
   /*
+
+
+
+
+
   Format the selection array to one item
   */
   this.selectionFilterAndFormat = async (bookSelectionArr) => {
@@ -113,12 +133,27 @@ function Command() {
   };
 
   /*
-  Saves the Book to the readingList
+
+
+
+
+
+
+  Starts the saving the Book to the readingList process
   */
   this.bookSave = async (bookToSave) => {
     this.isDBEmpty(bookToSave);
   };
 
+  /*
+
+
+
+
+
+  
+  Checks the file to see if the local DB is empty
+  */
   this.isDBEmpty = async (bookToSave) => {
     fs.readFile("./readingList.json", "UTF8", (err, data) => {
       if (err) {
@@ -137,11 +172,20 @@ function Command() {
           }
         );
       } else {
-        this.addBookToDB(data, bookToSave)
+        this.addBookToDB(data, bookToSave);
       }
     });
   };
 
+  /*
+
+
+
+
+
+  
+  Adds the book to the local DB
+  */
   this.addBookToDB = async (data, bookToSave) => {
     let amountOfBooks = 0;
     try {
@@ -191,6 +235,11 @@ function Command() {
   };
 
   /*
+
+
+
+
+
   Parse the data in the readingList file out in chunks
   */
   this.parseDB = async (dataGiven) => {
@@ -231,6 +280,11 @@ function Command() {
   };
 
   /*
+
+
+
+
+
   Reconstruct the data in JSON format
   */
   this.reconstructDB = async (levelOneKVPArr, levelTwoKVPArr, regexExp) => {
@@ -316,6 +370,11 @@ function Command() {
   };
 
   /*
+
+
+
+
+  
   Rewrite the readingList JSON file with the reconstructed data
   */
   this.restoreDB = async (restorableData) => {

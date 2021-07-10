@@ -8,24 +8,114 @@ Integration tests
 ============================================================
 */
 
-describe("Search for Book process, saveBook to local empty DB, mock", () => {
-  const bookToSave = { Title: "book1", Author: "fake", Publisher: "null" };
-  const mockDirPath = "/path/to/mockreadinglist.json";
-  let mockReadinglistDB;
-  const result = { 0: bookToSave };
+test.each([
+  //
+  {
+    bookToSave: {
+      Title: "The Lord of the Rings",
+      Author: "J. R. R. Tolkien",
+      Publisher: "Mariner Books",
+    },
+    readingListData: "emptyData",
+    howManyBooks: 0,
+    expected: {
+      0: {
+        Title: "The Lord of the Rings",
+        Author: "J. R. R. Tolkien",
+        Publisher: "Mariner Books",
+      },
+    },
+  },
 
-  beforeEach(() => {
-    // Set up some mocked out file info before each test
-    mockReadinglistDB = require("fs").mockReadFile(mockDirPath, "emptyData");
-  });
+  //
 
-  test("includes all files in the directory in the summary", async () => {
-    const newMockRLDB = await require("fs").mockWriteFile(
-      mockDirPath,
-      mockReadinglistDB,
-      bookToSave
+  {
+    bookToSave: {
+      Title: "The Lord of the Rings",
+      Author: "J. R. R. Tolkien",
+      Publisher: "Mariner Books",
+    },
+    readingListData: "notEmpty",
+    howManyBooks: 1,
+    expected: {
+      0: {
+        Title: "book 0",
+        Author: "fake",
+        Publisher: "null",
+      },
+      1: {
+        Title: "The Lord of the Rings",
+        Author: "J. R. R. Tolkien",
+        Publisher: "Mariner Books",
+      },
+    },
+  },
+
+  //
+
+  {
+    bookToSave: {
+      Title: "The Lord of the Rings",
+      Author: "J. R. R. Tolkien",
+      Publisher: "Mariner Books",
+    },
+    howManyBooks: 7,
+    readingListData: "notEmpty",
+    pathToFile: "/path/to/mockreadinglist.json",
+    expected: {
+      0: {
+        Title: "book 0",
+        Author: "fake",
+        Publisher: "null",
+      },
+      1: {
+        Title: "book 1",
+        Author: "fake",
+        Publisher: "null",
+      },
+      2: {
+        Title: "book 2",
+        Author: "fake",
+        Publisher: "null",
+      },
+      3: {
+        Title: "book 3",
+        Author: "fake",
+        Publisher: "null",
+      },
+      4: {
+        Title: "book 4",
+        Author: "fake",
+        Publisher: "null",
+      },
+      5: {
+        Title: "book 5",
+        Author: "fake",
+        Publisher: "null",
+      },
+      6: {
+        Title: "book 6",
+        Author: "fake",
+        Publisher: "null",
+      },
+      7: {
+        Title: "The Lord of the Rings",
+        Author: "J. R. R. Tolkien",
+        Publisher: "Mariner Books",
+      },
+    },
+  },
+
+  //
+])(
+  "integration tests for bookSave, isDBEmpty, and addBookToDB",
+  async ({ bookToSave, readingListData, howManyBooks, expected }) => {
+    const testResults = await mockCommands.bookSave(
+      bookToSave,
+      readingListData,
+      howManyBooks
     );
-    expect(result).toEqual(newMockRLDB);
-  });
-});
 
+    expect(JSON.stringify(testResults)).toEqual(JSON.stringify(expected));
+  }
+);

@@ -109,7 +109,7 @@ function Command() {
   */
   this.bookSave = async (bookToSave, readinglistData, howManybooksInDb) => {
     const pathToFile = "/path/to/mockreadinglist.json";
-    this.isDBEmpty(bookToSave, readinglistData, howManybooksInDb, pathToFile);
+    return this.isDBEmpty(bookToSave, readinglistData, howManybooksInDb, pathToFile);
   };
 
   /*
