@@ -50,7 +50,6 @@ test("to see if my inquirer module works like the original Inquirer package", as
       return data[inquireData.name];
     })
   );
-  //   console.log(myModule);
 
   expect(mockInquirerResult).toEqual(myModule);
 });
@@ -63,48 +62,58 @@ test("to see if my inquirer module works like the original Inquirer package", as
  ===============
  App Questions Fn Test 1
 */
-test("switch cases of the app questions", async () => {
-  const inputArr = ["starterQuestion", "searchBookByTitle", "selectBook", "isFinished", "dsjakdl"];
-  const extraDataArr = [
-    ["Search For a Book", "Check Your Books", "Exit"],
-    [],
-    ["Book1", "Book2", "Book3", "Book4", "Book5"],
-    [],
-    [],
-  ];
-  const testResults = [];
-  const results = [
-    {
+test.each([
+  {
+    appInquire: "starterQuestion",
+    extraData: null,
+    expected: {
       message: "What would you like to do?",
       type: "list",
       choices: ["Search For a Book", "Check Your Books", "Exit"],
       name: "choice",
     },
-    {
+  },
+  {
+    appInquire: "searchBookByTitle",
+    extraData: null,
+    expected: {
       message: "What is the title or author of the book?",
       type: "input",
       name: "search",
     },
-    {
+  },
+  {
+    appInquire: "selectBook",
+    extraData: ["Book1", "Book2", "Book3", "Book4", "Book5"],
+    expected: {
       message: "Which book would you like to save to your Reading List?",
       type: "list",
       choices: ["Book1", "Book2", "Book3", "Book4", "Book5"],
       name: "bookChosen",
     },
-    { message: "Are you finished?", type: "confirm", name: "answer" },
-    {
+  },
+  {
+    appInquire: "isFinished",
+    extraData: null,
+    expected: { message: "Are you finished?", type: "confirm", name: "answer" },
+  },
+  {
+    appInquire: "dsjakdl",
+    extraData: null,
+    expected: {
       message: "Something went amiss, would you like to try again?",
       type: "confirm",
       name: "exit",
     },
-  ];
-
-  for (let i = 0; i < inputArr.length; i++) {
-    // appQuestions(inputArr[i], extraDataArr[i]);
-    testResults.push(appQuestions(inputArr[i], extraDataArr[i]));
+  },
+])("test app questions", async ({ appInquire, extraData, expected }) => {
+  let testResult;
+  if (extraData === null) {
+    testResult = appQuestions(appInquire);
+  } else {
+    testResult = appQuestions(appInquire, extraData);
   }
-
-  expect(testResults).toEqual(results);
+  expect(testResult).toEqual(expected);
 });
 
 /*
@@ -128,118 +137,12 @@ test("prompt name is the key of user's input", async () => {
 });
 
 /*
-============================================================
-Integration tests
-============================================================
-*/
-
-/*
 
 
 
 
  ===============
  Inquirer Test 3
- */
-test("Starter Question first choice", async () => {
-  const inquireData = appQuestions("starterQuestion");
-  let result = inquireData.choices[0];
-
-  const myModule = await inquire(inquireData).then((data) => {
-    data.choice = "Search For a Book";
-    return data.choice;
-  });
-
-  const testResult = myModule;
-
-  expect(testResult).toEqual(result);
-});
-
-/*
-
-
-
-
- ===============
- Inquirer Test 4
- */
-test("Starter Question second choice", async () => {
-  const inquireData = appQuestions("starterQuestion");
-  let result = inquireData.choices[1];
-
-  const myModule = await inquire(inquireData).then((data) => {
-    data.choice = "Check Your Books";
-    return data.choice;
-  });
-
-  const testResult = myModule;
-
-  expect(testResult).toEqual(result);
-});
-
-/*
-
-
-
-
- ===============
- Inquirer Test 5
- */
-test("Starter Question third choice", async () => {
-  const inquireData = appQuestions("starterQuestion");
-  let result = inquireData.choices[2];
-
-  const myModule = await inquire(inquireData).then((data) => {
-    data.choice = "Exit";
-    return data.choice;
-  });
-
-  const testResult = myModule;
-
-  expect(testResult).toEqual(result);
-});
-
-/*
-
-
-
-
- ===============
- Inquirer Test 6
- */
-test("Starter Question app's question", async () => {
-  const inquireData = appQuestions("starterQuestion");
-  let result = inquireData.message;
-
-  const testResult = "What would you like to do?";
-
-  expect(testResult).toEqual(result);
-});
-
-/*
-
-
-
-
- ===============
- Inquirer Test 7
- */
-test("Search Book app's question", async () => {
-  const inquireData = appQuestions("searchBookByTitle");
-  let result = inquireData.message;
-
-  const testResult = "What is the title or author of the book?";
-
-  expect(testResult).toEqual(result);
-});
-
-/*
-
-
-
-
- ===============
- Inquirer Test 8
  */
 test("Search Book, User input to lowercase", async () => {
   const inquireData = appQuestions("searchBookByTitle");
@@ -262,7 +165,7 @@ test("Search Book, User input to lowercase", async () => {
 
 
 ===============
-Inquirer Test 8
+Inquirer Test 4
 */
 test("Search Book, trimming the user input", async () => {
   const inquireData = appQuestions("searchBookByTitle");
@@ -280,21 +183,46 @@ test("Search Book, trimming the user input", async () => {
 });
 
 /*
-
-
-
-
-===============
-Inquirer Test 9
+============================================================
+Integration tests
+============================================================
 */
-test("Select Book, app's question", async () => {
-  const inquireData = appQuestions("selectBook");
-  let result = "Which book would you like to save to your Reading List?";
 
-  const testResult = inquireData.message;
+/*
 
-  expect(testResult).toEqual(result);
-});
+
+
+
+ ===============
+ Inquirer Test Suite 1
+ */
+test.each([
+  {
+    inquireData: appQuestions("starterQuestion"),
+    index: 0,
+    expected: "Search For a Book",
+  },
+  {
+    inquireData: appQuestions("starterQuestion"),
+    index: 1,
+    expected: "Check Your Books",
+  },
+  {
+    inquireData: appQuestions("starterQuestion"),
+    index: 2,
+    expected: "Exit",
+  },
+])(
+  "correct app starter question choices for user",
+  async ({ inquireData, index, expected }) => {
+    const myModule = await inquire(inquireData).then((data) => {
+      data.choice = inquireData.choices[index];
+      return data.choice;
+    });
+
+    expect(myModule).toBe(expected);
+  }
+);
 
 /*
 
@@ -302,13 +230,31 @@ test("Select Book, app's question", async () => {
 
 
 ===============
-Inquirer Test 10
+Inquirer Test Suite 2
 */
-test("Parting Question, app's question", async () => {
-  const inquireData = appQuestions("isFinished");
-  let result = "Are you finished?";
 
-  const testResult = inquireData.message;
+test.each([
+  {
+    inquireData: appQuestions("starterQuestion"),
+    expected: "What would you like to do?",
+  },
+  {
+    inquireData: appQuestions("searchBookByTitle"),
+    expected: "What is the title or author of the book?",
+  },
+  {
+    inquireData: appQuestions("selectBook"),
+    expected: "Which book would you like to save to your Reading List?",
+  },
+  {
+    inquireData: appQuestions("isFinished"),
+    expected: "Are you finished?",
+  },
+])(
+  "mesages from App with specfic questions",
+  async ({ inquireData, expected }) => {
+    const testResult = inquireData.message;
 
-  expect(testResult).toEqual(result);
-});
+    expect(testResult).toBe(expected);
+  }
+);

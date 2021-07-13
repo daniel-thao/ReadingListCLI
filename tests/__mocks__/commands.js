@@ -109,7 +109,12 @@ function Command() {
   */
   this.bookSave = async (bookToSave, readinglistData, howManybooksInDb) => {
     const pathToFile = "/path/to/mockreadinglist.json";
-    return this.isDBEmpty(bookToSave, readinglistData, howManybooksInDb, pathToFile);
+    return this.isDBEmpty(
+      bookToSave,
+      readinglistData,
+      howManybooksInDb,
+      pathToFile
+    );
   };
 
   /*
@@ -162,7 +167,7 @@ function Command() {
           currentDB[key].Author === bookToSave.Author &&
           currentDB[key].Publisher === bookToSave.Publisher
         ) {
-          return console.log("You already have this saved in your list.\n");
+          return "You already have this saved in your list.\n";
         } else {
           amountOfBooks++;
         }

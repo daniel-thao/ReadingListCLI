@@ -61,7 +61,6 @@ test.each([
     },
     howManyBooks: 7,
     readingListData: "notEmpty",
-    pathToFile: "/path/to/mockreadinglist.json",
     expected: {
       0: {
         Title: "book 0",
@@ -117,5 +116,29 @@ test.each([
     );
 
     expect(JSON.stringify(testResults)).toEqual(JSON.stringify(expected));
+  }
+);
+
+test.each([
+  {
+    bookToSave: {
+      Title: "book 0",
+      Author: "fake",
+      Publisher: "null",
+    },
+    howManyBooks: 1,
+    readingListData: "notEmpty",
+    expected: "You already have this saved in your list.\n",
+  },
+])(
+  "Unable to save a book that already exists in your reading list",
+  async ({ bookToSave, readingListData, howManyBooks, expected }) => {
+    const testResults = await mockCommands.bookSave(
+      bookToSave,
+      readingListData,
+      howManyBooks
+    );
+
+    expect(testResults).toEqual(expected);
   }
 );
